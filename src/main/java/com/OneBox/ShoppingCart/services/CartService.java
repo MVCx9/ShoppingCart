@@ -1,6 +1,7 @@
 package com.OneBox.ShoppingCart.services;
 
 import com.OneBox.ShoppingCart.entities.Cart;
+import com.OneBox.ShoppingCart.entities.CartMapping;
 import com.OneBox.ShoppingCart.entities.Product;
 import com.OneBox.ShoppingCart.exceptions.CartAlreadyExistsException;
 import com.OneBox.ShoppingCart.exceptions.CartNotFoundException;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -28,28 +30,31 @@ public class CartService {
      * Returns all Carts
      * This action is not an activity
      */
-    public List<Cart> getAllCarts() {
-        List<Cart> carts = cartRepository.getAllCarts();
+    public List<CartMapping> getAllCarts() {
+        Map<Long, Cart> carts = cartRepository.getCartsMap();
 
         if(carts.isEmpty()){
             throw new CartNotFoundException();
         }
 
-        return carts;
+        return carts.keySet().stream()
+                .map(cart -> new CartMapping(carts.get(cart), getProductsFromCart(cart)))
+                .toList();
     }
 
     /**
      * Find Cart by ID
      * This action is not an activity
      */
-    public Cart findCartById(Long cartId) {
+    public CartMapping findCartMappingById(Long cartId) {
         Cart cart = cartRepository.findCartById(cartId);
+
 
         if(cart == null) {
             throw new CartNotFoundException(cartId);
         }
 
-        return cart;
+        return new CartMapping(cart, getProductsFromCart(cart.getId()));
     }
 
     /**
@@ -89,7 +94,7 @@ public class CartService {
             throw new ProductAlreadyAddedToCartException(cart.getId(), product.getId());
         }
 
-        cartRepository.addProductToCart(cart.getId(), product, productQuantity);
+        cartRepository.addProductToCart(cart.getId(), product.getId(), productQuantity);
         registerCartActivity(cart.getId());
 
         return findCartById(cart.getId());
@@ -100,7 +105,14 @@ public class CartService {
      * This action is an activity
      */
     public Map<Product, Integer> getProductsFromCart(Long cartId) {
-        return findCartById(cartId).getProducts();
+        Map <Long, Integer> products = findCartById(cartId).getProducts();
+
+        return products.keySet().stream()
+                .collect(Collectors.toMap(
+                        productService::findProductById,
+                        products::get
+                    )
+                );
     }
 
     /**
@@ -115,7 +127,7 @@ public class CartService {
             throw new ProductNotFoundInCartException(cart.getId(), product.getId());
         }
 
-        cartRepository.updateProductInCart(cart.getId(), product, productQuantity);
+        cartRepository.updateProductInCart(cart.getId(), product.getId(), productQuantity);
         registerCartActivity(cartId);
     }
 
@@ -131,7 +143,7 @@ public class CartService {
             throw new ProductNotFoundInCartException(cart.getId(), product.getId());
         }
 
-        cartRepository.removeProductFromCart(cart.getId(), product );
+        cartRepository.removeProductFromCart(cart.getId(), product.getId() );
         registerCartActivity(cartId);
     }
 
@@ -147,23 +159,37 @@ public class CartService {
     }
 
     /**
+     * Find Cart by ID
+     * This action is not an activity
+     */
+    private Cart findCartById(Long cartId) {
+        Cart cart = cartRepository.findCartById(cartId);
+
+        if(cart == null) {
+            throw new CartNotFoundException(cartId);
+        }
+
+        return cart;
+    }
+
+    /**
      * Find if a Product is inside the Cart by ID
      */
     private boolean isProductInCart(Long cartId, Long productId) {
         Cart cart = findCartById(cartId);
         Product product = productService.findProductById(productId);
 
-        return cart.getProducts().get(product) != null;
+        return cart.getProducts().get(product.getId()) != null;
     }
 
     /**
      * Register Cart activity saving Date info + updating totalAmount
      */
     private void registerCartActivity(Long cartId){
-        Map<Long, Cart> carts = cartRepository.getCartsMap();
+        Map<Product, Integer> products = getProductsFromCart(cartId);
 
         // Calculate the total cost of each product
-        double totalAmount = carts.get(cartId).getProducts().entrySet().stream()
+        double totalAmount = products.entrySet().stream()
                 .mapToDouble(entry -> entry.getKey().getAmount() * entry.getValue())
                 .sum();
         long currentTime = System.currentTimeMillis();

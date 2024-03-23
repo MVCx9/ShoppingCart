@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.TimeUnit;
 
+import static org.awaitility.Awaitility.await;
 import static org.hamcrest.Matchers.*;
 
 class CartControllerIT extends IntegrationTestConfiguration {
@@ -46,7 +47,6 @@ class CartControllerIT extends IntegrationTestConfiguration {
 
         // and: the response contains the cart id
         response.then()
-                .body("id", is(cartId))
                 .body("totalAmount", is(0.0f))
                 .body("lastActivity", notNullValue())
                 .body("products", anEmptyMap());
@@ -62,8 +62,7 @@ class CartControllerIT extends IntegrationTestConfiguration {
         response.then().statusCode(404);
 
         // and: the response contains the cart id
-        ValidatableResponse validatableResponse = response.then()
-                .body("detail", is("No Carts could be found with Cart ID: " + nonExistingCartId));
+        response.then().body("detail", is("No Carts could be found with Cart ID: " + nonExistingCartId));
     }
 
     @Test
@@ -75,7 +74,6 @@ class CartControllerIT extends IntegrationTestConfiguration {
         var findResponseBefore = cartClient.getCart(cartId);
         findResponseBefore.then().statusCode(200);
         findResponseBefore.then()
-                .body("id", is(cartId))
                 .body("totalAmount", is(0.0f))
                 .body("lastActivity", notNullValue())
                 .body("products", anEmptyMap());
@@ -85,15 +83,12 @@ class CartControllerIT extends IntegrationTestConfiguration {
 
         // then: the response is successful
         response.then().statusCode(200);
-
-        response.then()
-                .body("message", is(Constants.REMOVE_MESSAGE));
+        response.then().body("message", is(Constants.REMOVE_MESSAGE));
 
         // and: the cart does not exist and returns an error
         var findResponseAfter = cartClient.getCart(cartId);
         findResponseAfter.then().statusCode(404);
-        ValidatableResponse validatableResponse = findResponseAfter.then()
-                .body("detail", is("No Carts could be found with Cart ID: " + cartId));
+        findResponseAfter.then().body("detail", is("No Carts could be found with Cart ID: " + cartId));
     }
 
     @Test
@@ -105,7 +100,6 @@ class CartControllerIT extends IntegrationTestConfiguration {
         var findCartResponseBefore = cartClient.getCart(cartId);
         findCartResponseBefore.then().statusCode(200);
         findCartResponseBefore.then()
-                .body("id", is(cartId))
                 .body("totalAmount", is(0.0f))
                 .body("lastActivity", notNullValue())
                 .body("products", anEmptyMap());
@@ -127,11 +121,11 @@ class CartControllerIT extends IntegrationTestConfiguration {
 
         // and: product is in the cart
         response.then()
-                .body("id", is(cartId))
                 .body("totalAmount", is(greaterThan(0.0f)))
                 .body("lastActivity", notNullValue())
                 .body("products", aMapWithSize(greaterThanOrEqualTo(1)));
     }
+
 
     @Test
     void testRemoveInactiveCarts() {

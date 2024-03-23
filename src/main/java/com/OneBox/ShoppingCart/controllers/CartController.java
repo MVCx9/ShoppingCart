@@ -1,6 +1,7 @@
 package com.OneBox.ShoppingCart.controllers;
 
 import com.OneBox.ShoppingCart.entities.Cart;
+import com.OneBox.ShoppingCart.entities.CartMapping;
 import com.OneBox.ShoppingCart.entities.Product;
 import com.OneBox.ShoppingCart.services.CartService;
 import com.OneBox.ShoppingCart.utils.Constants;
@@ -39,13 +40,13 @@ public class CartController {
 
     @GetMapping("/{cartId}")
     @ResponseStatus(value = OK)
-    public Cart findCartById(@PathVariable @NotNull Long cartId) {
-        return cartService.findCartById(cartId);
+    public CartMapping findCartById(@PathVariable @NotNull Long cartId) {
+        return cartService.findCartMappingById(cartId);
     }
 
     @GetMapping("/get-all")
     @ResponseStatus(value = OK)
-    public List<Cart> getAllCarts() {
+    public List<CartMapping> getAllCarts() {
         return cartService.getAllCarts();
     }
 
@@ -73,7 +74,6 @@ public class CartController {
     }
 
     @PutMapping("{cartId}/products/{productId}")
-    @ResponseStatus(value = OK)
     public ResponseEntity<Map<String, String>> updateProductQuantityFromCart(@PathVariable @NotNull Long cartId, @PathVariable @NotNull Long productId, @RequestParam @NotNull Integer productQuantity) {
         if(productQuantity <= 0) {
             throw new IllegalArgumentException("Illegal value for productQuantity: " + productQuantity);
@@ -87,7 +87,6 @@ public class CartController {
     }
 
     @DeleteMapping("/{cartId}/products/{productId}")
-    @ResponseStatus(value = OK)
     public ResponseEntity<Map<String, String>> removeProductFromCart(@PathVariable @NotNull Long cartId, @PathVariable @NotNull Long productId) {
         cartService.removeProductFromCart(cartId, productId);
 
@@ -97,7 +96,6 @@ public class CartController {
     }
 
     @DeleteMapping("/remove-all-products/{cartId}")
-    @ResponseStatus(value = OK)
     public ResponseEntity<Map<String, String>> removeAllProductsFromCart(@PathVariable @NotNull Long cartId) {
         cartService.removeAllProductsFromCart(cartId);
 

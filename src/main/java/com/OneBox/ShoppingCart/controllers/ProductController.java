@@ -49,7 +49,6 @@ public class ProductController {
     }
 
     @PutMapping("/{productId}")
-    @ResponseStatus(value = OK)
     public ResponseEntity<Map<String, String>> updateProduct(@PathVariable @NotNull Long productId, @RequestParam String description, @RequestParam Double amount) {
         productService.updateProduct(productId, description, amount);
         Map<String, String> response = new HashMap<>();

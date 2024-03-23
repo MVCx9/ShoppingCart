@@ -11,7 +11,7 @@ import java.util.Map;
 public class Cart {
 
     private long id;
-    private Map<Product, Integer> products;
+    private Map<Long, Integer> products;
     private double totalAmount;
     private long lastActivity;
 
