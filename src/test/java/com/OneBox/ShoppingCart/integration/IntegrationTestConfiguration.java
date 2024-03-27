@@ -1,5 +1,6 @@
-package com.OneBox.ShoppingCart;
+package com.OneBox.ShoppingCart.integration;
 
+import com.OneBox.ShoppingCart.ShoppingCartApplication;
 import io.restassured.RestAssured;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.boot.test.context.SpringBootTest;

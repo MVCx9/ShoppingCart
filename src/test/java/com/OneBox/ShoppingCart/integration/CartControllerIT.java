@@ -1,9 +1,8 @@
 package com.OneBox.ShoppingCart.integration;
 
 
-import com.OneBox.ShoppingCart.IntegrationTestConfiguration;
-import com.OneBox.ShoppingCart.clients.CartClient;
-import com.OneBox.ShoppingCart.clients.ProductClient;
+import com.OneBox.ShoppingCart.integration.clients.CartClient;
+import com.OneBox.ShoppingCart.integration.clients.ProductClient;
 import com.OneBox.ShoppingCart.utils.Constants;
 import io.restassured.response.ValidatableResponse;
 import org.junit.jupiter.api.Test;

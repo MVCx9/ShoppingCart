@@ -1,4 +1,4 @@
-package com.OneBox.ShoppingCart.clients;
+package com.OneBox.ShoppingCart.integration.clients;
 
 import io.restassured.response.Response;
 
