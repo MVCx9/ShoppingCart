@@ -1,16 +1,0 @@
-
-h
-java:S1192"FDefine a constant instead of duplicating this literal "TQ123" 3 times.(¶Ã‡üÿÿÿÿ8Õã´Õæ1
-c
-java:S1192"GDefine a constant instead of duplicating this literal "amount" 3 times.(Á¸Â8Úã´Õæ1
-n
-java:S1192"LDefine a constant instead of duplicating this literal "description" 3 times.(¶Ã‡üÿÿÿÿ8Ûã´Õæ1
-v	java:S120"ZRename this package name to match the regular expression '^[a-z_]+(\.[a-z_][a-z0-9_]*)*$'.(öÅîë8áã´Õæ1
-d
-java:S1854;"GRemove this useless assignment to local variable "validatableResponse".(ûØıó8¹ä´Õæ1
-U
-java:S1481;"8Remove this unused "validatableResponse" local variable.(ûØıó8Áä´Õæ1
-i
-java:S1854X"GRemove this useless assignment to local variable "validatableResponse".(²¨Üâøÿÿÿÿ8Âä´Õæ1
-Z
-java:S1481X"8Remove this unused "validatableResponse" local variable.(²¨Üâøÿÿÿÿ8òä´Õæ1
