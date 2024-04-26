@@ -65,7 +65,7 @@ public class ProductController {
     }
 
     @ExceptionHandler({RuntimeException.class})
-    public ErrorResponse handleException(RuntimeException error) {
+    private ErrorResponse handleException(RuntimeException error) {
         return ErrorResponse.create(error, HttpStatus.NOT_FOUND, error.getMessage());
     }
 }

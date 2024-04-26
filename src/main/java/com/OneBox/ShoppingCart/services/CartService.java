@@ -205,7 +205,7 @@ public class CartService {
         long currentTime = System.currentTimeMillis();
         Map<Long, Cart> carts = cartRepository.getCartsMap();
 
-        if(carts != null){
+        if(carts != null) {
             // Cart filter to select which carts lasActivity >= 10 min
             List<Long> cartIdsToDelete =
                     carts.entrySet().stream()
